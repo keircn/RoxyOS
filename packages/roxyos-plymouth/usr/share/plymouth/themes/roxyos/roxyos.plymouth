@@ -1,9 +1,8 @@
 [Plymouth Theme]
 Name=RoxyOS
 Description=Roxy Migurdia themed boot splash
-ModuleName=roxyos
-```
+ModuleName=script
 
-[Plymouth Meta]
-Themes=roxyos
-```
+[script]
+ImageDir=/usr/share/plymouth/themes/roxyos
+ScriptFile=/usr/share/plymouth/themes/roxyos/roxyos.script

@@ -2,14 +2,15 @@
 
 pkgname=roxyos-plymouth
 pkgver=1.0.2
-pkgrel=1
+pkgrel=2
 pkgdesc="Roxy Migurdia themed Plymouth boot splash"
 arch=('any')
 url="https://github.com/keircn/RoxyOS"
 license=('MIT')
 depends=('plymouth')
+install=roxyos-plymouth.install
 options=('!strip')
 
 package() {
-    cp -r "${startdir}/usr" "${pkgdir}/"
+  cp -r "${startdir}/usr" "${pkgdir}/"
 }

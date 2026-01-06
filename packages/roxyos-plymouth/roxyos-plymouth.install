@@ -1,0 +1,23 @@
+post_install() {
+    echo ":: Setting RoxyOS as default Plymouth theme..."
+    plymouth-set-default-theme -R roxyos 2>/dev/null || true
+    echo ""
+    echo "RoxyOS Plymouth theme installed!"
+    echo ""
+    echo "To complete setup:"
+    echo "  1. Ensure 'plymouth' hook is in /etc/mkinitcpio.conf HOOKS array"
+    echo "     (after 'udev', before 'encrypt' if using encryption)"
+    echo "  2. Add 'quiet splash' to your kernel parameters"
+    echo "  3. Run: sudo mkinitcpio -P"
+    echo ""
+}
+
+post_upgrade() {
+    post_install
+}
+
+post_remove() {
+    if [ -x /usr/bin/plymouth-set-default-theme ]; then
+        plymouth-set-default-theme -R spinner 2>/dev/null || true
+    fi
+}
