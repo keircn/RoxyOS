@@ -1,7 +1,7 @@
 # Maintainer: Keiran <keircn@proton.me>
 
 pkgname=roxyos-assets
-pkgver=1.0.3
+pkgver=1.0.5
 pkgrel=1
 pkgdesc="Roxy Migurdia themed visual assets (wallpapers, themes, icons)"
 arch=('any')
