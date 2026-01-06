@@ -8,59 +8,58 @@ arch=('any')
 url="https://github.com/keircn/RoxyOS"
 license=('MIT')
 depends=(
-    'niri'
-    'roxyos-niri'
-    'roxyos-waybar'
-    'roxyos-hyprlock'
-    'roxyos-kitty'
-    'roxyos-rofi'
-    'roxyos-plymouth'
-    'roxyos-assets'
-    'roxyos-fish'
-    'roxyos-mako'
-    'waybar'
-    'rofi'
-    'hyprlock'
-    'kitty'
-    'plymouth'
-    'fish'
-    'starship'
-    'wob'
-    'wl-clipboard'
-    'cliphist'
-    'mako'
-    'swww'
-    'ttf-jetbrains-mono-nerd'
-    'noto-fonts'
-    'adwaita-icon-theme'
+  'niri'
+  'roxyos-niri'
+  'roxyos-waybar'
+  'roxyos-kitty'
+  'roxyos-rofi'
+  'roxyos-plymouth'
+  'roxyos-assets'
+  'roxyos-fish'
+  'roxyos-mako'
+  'waybar'
+  'rofi'
+  'hyprlock'
+  'kitty'
+  'plymouth'
+  'fish'
+  'starship'
+  'wob'
+  'wl-clipboard'
+  'cliphist'
+  'mako'
+  'swww'
+  'ttf-jetbrains-mono-nerd'
+  'noto-fonts'
+  'adwaita-icon-theme'
 )
 optdepends=(
-    'roxyos-sddm: SDDM display manager theme'
-    'roxyos-ly: ly console display manager theme'
-    'roxyos-setup: TUI setup wizard'
-    'roxyos-ghostty: Ghostty terminal configuration'
-    'nwg-look: GTK settings utility'
-    'qt5ct: Qt5 settings utility'
-    'qt6ct: Qt6 settings utility'
-    'ghostty: Alternative terminal emulator'
-    'yazi: Terminal file manager'
-    'swaync: Notification center'
-    'playerctl: Media player control'
-    'brightnessctl: Brightness control'
-    'grim: Screenshot utility'
-    'slurp: Region selection for screenshots'
+  'roxyos-sddm: SDDM display manager theme'
+  'roxyos-ly: ly console display manager theme'
+  'roxyos-setup: TUI setup wizard'
+  'roxyos-ghostty: Ghostty terminal configuration'
+  'nwg-look: GTK settings utility'
+  'qt5ct: Qt5 settings utility'
+  'qt6ct: Qt6 settings utility'
+  'ghostty: Alternative terminal emulator'
+  'yazi: Terminal file manager'
+  'swaync: Notification center'
+  'playerctl: Media player control'
+  'brightnessctl: Brightness control'
+  'grim: Screenshot utility'
+  'slurp: Region selection for screenshots'
 )
 backup=(
-    'etc/roxyos/setup.conf'
+  'etc/roxyos/setup.conf'
 )
 install=roxyos.install
 
 package() {
-    mkdir -p "${pkgdir}/etc/roxyos"
-    mkdir -p "${pkgdir}/usr/share/roxyos"
-    mkdir -p "${pkgdir}/usr/share/doc/roxyos"
-    
-    install -Dm644 "${startdir}/setup.conf" "${pkgdir}/etc/roxyos/setup.conf"
-    install -Dm644 "${startdir}/roxyos.conf" "${pkgdir}/usr/share/roxyos/roxyos.conf"
-    install -Dm644 "${startdir}/README.md" "${pkgdir}/usr/share/doc/roxyos/README.md"
+  mkdir -p "${pkgdir}/etc/roxyos"
+  mkdir -p "${pkgdir}/usr/share/roxyos"
+  mkdir -p "${pkgdir}/usr/share/doc/roxyos"
+
+  install -Dm644 "${startdir}/setup.conf" "${pkgdir}/etc/roxyos/setup.conf"
+  install -Dm644 "${startdir}/roxyos.conf" "${pkgdir}/usr/share/roxyos/roxyos.conf"
+  install -Dm644 "${startdir}/README.md" "${pkgdir}/usr/share/doc/roxyos/README.md"
 }
