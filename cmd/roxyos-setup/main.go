@@ -111,6 +111,7 @@ func initialModel() model {
 			{"Kitty", "roxyos-kitty", "GPU-accelerated terminal", true, false},
 			{"Ghostty", "roxyos-ghostty", "Modern terminal emulator", false, false},
 			{"Fish", "roxyos-fish", "Shell with Starship prompt", true, false},
+			{"Fastfetch", "roxyos-fastfetch", "System info display", true, false},
 			{"Mako", "roxyos-mako", "Notification daemon", true, false},
 			{"Plymouth", "roxyos-plymouth", "Boot splash theme", false, false},
 			{"Assets", "roxyos-assets", "Wallpapers and themes", true, false},
@@ -257,14 +258,15 @@ func (m model) applyConfigs() tea.Cmd {
 		roxyosDir := "/usr/share/roxyos/configs"
 
 		configMap := map[string]string{
-			"roxyos-niri":    "niri",
-			"roxyos-waybar":  "waybar",
-			"roxyos-rofi":    "rofi",
-			"roxyos-kitty":   "kitty",
-			"roxyos-ghostty": "ghostty",
-			"roxyos-fish":    "fish",
-			"roxyos-mako":    "mako",
-			"roxyos-hypr":    "hypr",
+			"roxyos-niri":      "niri",
+			"roxyos-waybar":    "waybar",
+			"roxyos-rofi":      "rofi",
+			"roxyos-kitty":     "kitty",
+			"roxyos-ghostty":   "ghostty",
+			"roxyos-fish":      "fish",
+			"roxyos-mako":      "mako",
+			"roxyos-hypr":      "hypr",
+			"roxyos-fastfetch": "fastfetch",
 		}
 
 		for _, comp := range m.components {
