@@ -442,25 +442,31 @@ func (m model) viewSelectComponents() string {
 	for i, comp := range m.components {
 		cursor := "  "
 		if i == m.cursor {
-			cursor = " "
+			cursor = accentStyle.Render("> ")
 		}
 
-		check := ""
+		check := "[ ]"
 		if comp.enabled {
-			check = successStyle.Render("")
+			check = "[x]"
+		}
+		checkStyled := check
+		if comp.enabled {
+			checkStyled = successStyle.Render(check)
 		}
 
-		name := comp.name
+		paddedName := fmt.Sprintf("%-12s", comp.name)
+		name := paddedName
 		if i == m.cursor {
-			name = accentStyle.Render(comp.name)
+			name = accentStyle.Render(paddedName)
 		}
 
-		core := ""
+		core := "          "
 		if comp.isCore {
-			core = mutedStyle.Render(" (required)")
+			core = mutedStyle.Render("(required)")
 		}
 
-		items = append(items, fmt.Sprintf("%s%s %s%s  %s", cursor, check, name, core, mutedStyle.Render(comp.description)))
+		line := fmt.Sprintf("%s%s %s %s  %s", cursor, checkStyled, name, core, mutedStyle.Render(comp.description))
+		items = append(items, line)
 	}
 
 	return lipgloss.JoinVertical(lipgloss.Left,
@@ -469,7 +475,7 @@ func (m model) viewSelectComponents() string {
 		"",
 		strings.Join(items, "\n"),
 		"",
-		mutedStyle.Render("↑/↓ navigate  space toggle  a toggle all  enter continue"),
+		mutedStyle.Render("j/k navigate | space toggle | a toggle all | enter continue"),
 	)
 }
 
