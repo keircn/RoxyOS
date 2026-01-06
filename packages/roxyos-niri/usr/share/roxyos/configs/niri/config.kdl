@@ -57,7 +57,11 @@ spawn-at-startup "hypridle"
 spawn-at-startup "wl-paste" "--watch" "cliphist" "store"
 
 prefer-no-csd
-skip-at-startup
+
+hotkey-overlay {
+    skip-at-startup
+    hide-not-bound
+}
 
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
