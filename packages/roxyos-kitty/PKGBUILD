@@ -1,7 +1,7 @@
 # Maintainer: Keiran <keircn@proton.me>
 
 pkgname=roxyos-kitty
-pkgver=1.0.1
+pkgver=1.0.2
 pkgrel=1
 pkgdesc="Roxy Migurdia themed Kitty terminal configuration"
 arch=('any')

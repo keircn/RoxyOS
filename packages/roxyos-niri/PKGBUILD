@@ -1,8 +1,8 @@
 # Maintainer: Keiran <keircn@proton.me>
 
 pkgname=roxyos-niri
-pkgver=1.0.1
-pkgrel=2
+pkgver=1.0.2
+pkgrel=1
 pkgdesc="Roxy Migurdia themed Niri configuration"
 arch=('any')
 url="https://github.com/keircn/RoxyOS"
