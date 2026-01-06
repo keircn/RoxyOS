@@ -33,7 +33,6 @@ depends=(
   'ttf-jetbrains-mono-nerd'
   'noto-fonts'
   'adwaita-icon-theme'
-  'fastfetch'
 )
 optdepends=(
   'roxyos-sddm: SDDM display manager theme'
