@@ -26,6 +26,7 @@ PACKAGES=(
   roxyos-sddm
   roxyos-setup
   roxyos-hypr
+  roxyos-fastfetch
   roxyos
 )
 
