@@ -231,4 +231,4 @@ binds {
     Mod+Shift+P { power-off-monitors; }
 }
 
-include "~/.config/niri/custom.kdl"
+include "custom.kdl"
