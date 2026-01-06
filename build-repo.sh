@@ -25,6 +25,7 @@ PACKAGES=(
   roxyos-ly
   roxyos-sddm
   roxyos-setup
+  roxyos-hypr
   roxyos
 )
 
