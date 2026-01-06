@@ -10,7 +10,3 @@ license=('MIT')
 depends=('plymouth')
 install=roxyos-plymouth.install
 options=('!strip')
-
-package() {
-  cp -r "${startdir}/usr" "${pkgdir}/"
-}
