@@ -1,7 +1,7 @@
 # Maintainer: Keiran <keircn@proton.me>
 
 pkgname=roxyos-sddm
-pkgver=1.0.2
+pkgver=1.0.3
 pkgrel=1
 pkgdesc="Roxy Migurdia themed SDDM configuration"
 arch=('any')
