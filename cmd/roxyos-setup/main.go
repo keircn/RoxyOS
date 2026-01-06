@@ -107,7 +107,7 @@ func initialModel() model {
 			{"Niri", "roxyos-niri", "Scrolling window manager", true, true},
 			{"Waybar", "roxyos-waybar", "Status bar", true, true},
 			{"Rofi", "roxyos-rofi", "Application launcher", true, true},
-			{"Hyprlock", "roxyos-hyprlock", "Lock screen", true, false},
+			{"Hypr", "roxyos-hypr", "Lock, wallpaper, idle daemon", true, false},
 			{"Kitty", "roxyos-kitty", "GPU-accelerated terminal", true, false},
 			{"Ghostty", "roxyos-ghostty", "Modern terminal emulator", false, false},
 			{"Fish", "roxyos-fish", "Shell with Starship prompt", true, false},
@@ -264,6 +264,7 @@ func (m model) applyConfigs() tea.Cmd {
 			"roxyos-ghostty": "ghostty",
 			"roxyos-fish":    "fish",
 			"roxyos-mako":    "mako",
+			"roxyos-hypr":    "hypr",
 		}
 
 		for _, comp := range m.components {
@@ -287,16 +288,6 @@ func (m model) applyConfigs() tea.Cmd {
 		}
 
 		for _, comp := range m.components {
-			if comp.pkg == "roxyos-hyprlock" && comp.enabled {
-				src := filepath.Join(roxyosDir, "hyprlock.conf")
-				dst := filepath.Join(configDir, "hypr", "hyprlock.conf")
-				os.MkdirAll(filepath.Join(configDir, "hypr"), 0755)
-				if _, err := os.Stat(src); err == nil {
-					data, _ := os.ReadFile(src)
-					os.WriteFile(dst, data, 0644)
-				}
-			}
-
 			if comp.pkg == "roxyos-fish" && comp.enabled {
 				src := filepath.Join(roxyosDir, "starship")
 				dst := filepath.Join(configDir, "starship")

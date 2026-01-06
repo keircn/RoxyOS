@@ -52,10 +52,12 @@ layout {
 
 spawn-at-startup "waybar"
 spawn-at-startup "mako"
-spawn-at-startup "swww-daemon"
+spawn-at-startup "hyprpaper"
+spawn-at-startup "hypridle"
 spawn-at-startup "wl-paste" "--watch" "cliphist" "store"
 
 prefer-no-csd
+skip-at-startup
 
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 

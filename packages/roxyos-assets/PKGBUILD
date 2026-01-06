@@ -10,11 +10,5 @@ license=('MIT')
 options=('!strip')
 
 package() {
-  mkdir -p "${pkgdir}/usr/share/roxyos/assets/wallpapers"
-  mkdir -p "${pkgdir}/usr/share/roxyos/assets/themes"
-  mkdir -p "${pkgdir}/usr/share/roxyos/assets/icons"
-
-  touch "${pkgdir}/usr/share/roxyos/assets/wallpapers/.gitkeep"
-  touch "${pkgdir}/usr/share/roxyos/assets/themes/.gitkeep"
-  touch "${pkgdir}/usr/share/roxyos/assets/icons/.gitkeep"
+    cp -r "${startdir}/usr" "${pkgdir}/"
 }
