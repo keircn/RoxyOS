@@ -17,6 +17,8 @@ depends=(
   'roxyos-assets'
   'roxyos-fish'
   'roxyos-mako'
+  'roxyos-hypr'
+  'roxyos-fastfetch'
   'waybar'
   'rofi'
   'hyprlock'
@@ -28,10 +30,10 @@ depends=(
   'wl-clipboard'
   'cliphist'
   'mako'
-  'swww'
   'ttf-jetbrains-mono-nerd'
   'noto-fonts'
   'adwaita-icon-theme'
+  'fastfetch'
 )
 optdepends=(
   'roxyos-sddm: SDDM display manager theme'
