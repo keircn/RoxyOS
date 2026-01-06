@@ -1,0 +1,81 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "margin-left": 8,
+    "margin-right": 8,
+    "margin-top": 8,
+    "spacing": 4,
+
+    "modules-left": ["custom/roxy-logo", "niri/workspaces", "niri/mode"],
+    "modules-center": ["clock"],
+    "modules-right": ["network", "cpu", "memory", "disk", "battery", "backlight", "pulseaudio", "tray", "custom/menu"],
+
+    "niri/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{name}",
+        "icon-size": 14
+    },
+
+    "niri/mode": {
+        "format": "<span style=\"color: #5dade2\">{}</span>"
+    },
+
+    "clock": {
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt>{:%H:%M}</tt>",
+        "format": " {:%H:%M}",
+        "format-alt": " {:%H:%M:%S}",
+        "interval": 1
+    },
+
+    "network": {
+        "format-wifi": " {essid}",
+        "format-ethernet": " {ipaddr}",
+        "format-disconnected": " disconnected",
+        "tooltip-format": "{ifname}: {ipaddr}",
+        "on-click": "networkmanager_dmenu"
+    },
+
+    "cpu": { "format": " {usage}%", "interval": 5 },
+    "memory": { "format": " {percentage}%", "interval": 5 },
+    "disk": { "format": " {free}", "path": "/", "interval": 30 },
+
+    "battery": {
+        "states": { "warning": 30, "critical": 15 },
+        "format": "{capacity}% {icon}",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{icon} {time}",
+        "interval": 5
+    },
+
+    "backlight": {
+        "format": " {percent}%",
+        "on-scroll-down": "brightnessctl set 5%-",
+        "on-scroll-up": "brightnessctl set +5%"
+    },
+
+    "pulseaudio": {
+        "format": "{volume}% {icon}",
+        "format-muted": " muted",
+        "format-icons": { "default": ["", "", "", ""] },
+        "on-click": "pavucontrol",
+        "on-click-right": "pamixer -t",
+        "scroll-step": 5
+    },
+
+    "tray": { "icon-size": 16, "spacing": 4 },
+
+    "custom/roxy-logo": {
+        "format": "",
+        "tooltip": "RoxyOS",
+        "on-click": "rofi -show drun"
+    },
+
+    "custom/menu": {
+        "format": "",
+        "tooltip": "Menu",
+        "on-click": "rofi -show drun -show-icons"
+    }
+}

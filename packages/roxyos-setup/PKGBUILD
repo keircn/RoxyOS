@@ -1,0 +1,31 @@
+# Maintainer: Keiran <keircn@proton.me>
+
+pkgname=roxyos-setup
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="RoxyOS TUI setup wizard for configuring the Roxy Migurdia themed desktop"
+arch=('x86_64')
+url="https://github.com/keircn/RoxyOS"
+license=('MIT')
+depends=('glibc')
+makedepends=('go')
+optdepends=(
+    'roxyos: Full RoxyOS metapackage'
+)
+
+build() {
+    cd "${startdir}/../../cmd/roxyos-setup"
+    
+    export CGO_CPPFLAGS="${CPPFLAGS}"
+    export CGO_CFLAGS="${CFLAGS}"
+    export CGO_CXXFLAGS="${CXXFLAGS}"
+    export CGO_LDFLAGS="${LDFLAGS}"
+    export GOFLAGS="-buildmode=pie -trimpath -ldflags=-linkmode=external -mod=readonly -modcacherw"
+    
+    go build -o roxyos-setup .
+}
+
+package() {
+    cd "${startdir}/../../cmd/roxyos-setup"
+    install -Dm755 roxyos-setup "${pkgdir}/usr/bin/roxyos-setup"
+}

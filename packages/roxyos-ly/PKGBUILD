@@ -1,0 +1,16 @@
+# Maintainer: Keiran <keircn@proton.me>
+
+pkgname=roxyos-ly
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Roxy Migurdia themed ly (console display manager) configuration"
+arch=('any')
+url="https://github.com/keircn/RoxyOS"
+license=('MIT')
+depends=('ly')
+options=('!strip')
+
+package() {
+    cp -r "${startdir}/usr" "${pkgdir}/"
+    cp -r "${startdir}/etc" "${pkgdir}/"
+}

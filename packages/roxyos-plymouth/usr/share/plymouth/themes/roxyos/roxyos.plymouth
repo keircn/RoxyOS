@@ -1,0 +1,9 @@
+[Plymouth Theme]
+Name=RoxyOS
+Description=Roxy Migurdia themed boot splash
+ModuleName=roxyos
+```
+
+[Plymouth Meta]
+Themes=roxyos
+```

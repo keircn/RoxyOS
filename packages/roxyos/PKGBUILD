@@ -1,0 +1,59 @@
+# Maintainer: Keiran <keircn@proton.me>
+
+pkgname=roxyos
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Roxy Migurdia themed metapackage for Arch Linux with Niri, waybar, and beautiful configurations"
+arch=('any')
+url="https://github.com/keircn/RoxyOS"
+license=('MIT')
+depends=(
+    'niri'
+    'roxyos-niri'
+    'roxyos-waybar'
+    'roxyos-hyprlock'
+    'roxyos-kitty'
+    'roxyos-rofi'
+    'roxyos-plymouth'
+    'roxyos-assets'
+    'roxyos-fish'
+    'roxyos-mako'
+    'waybar'
+    'rofi'
+    'hyprlock'
+    'kitty'
+    'plymouth'
+    'fish'
+    'starship'
+    'wob'
+    'wl-clipboard'
+    'cliphist'
+    'mako'
+    'swww'
+    'ttf-jetbrains-mono-nerd'
+    'noto-fonts'
+    'adwaita-icon-theme'
+)
+optdepends=(
+    'roxyos-sddm: SDDM display manager theme'
+    'roxyos-ly: ly console display manager theme'
+    'roxyos-setup: TUI setup wizard'
+    'nwg-look: GTK settings utility'
+    'qt5ct: Qt5 settings utility'
+    'qt6ct: Qt6 settings utility'
+    'ghostty: Alternative terminal emulator'
+)
+backup=(
+    'etc/roxyos/setup.conf'
+)
+install=roxyos.install
+
+package() {
+    mkdir -p "${pkgdir}/etc/roxyos"
+    mkdir -p "${pkgdir}/usr/share/roxyos"
+    mkdir -p "${pkgdir}/usr/share/doc/roxyos"
+    
+    install -Dm644 "${startdir}/setup.conf" "${pkgdir}/etc/roxyos/setup.conf"
+    install -Dm644 "${startdir}/roxyos.conf" "${pkgdir}/usr/share/roxyos/roxyos.conf"
+    install -Dm644 "${startdir}/README.md" "${pkgdir}/usr/share/doc/roxyos/README.md"
+}

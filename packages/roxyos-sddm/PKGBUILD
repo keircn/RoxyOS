@@ -1,0 +1,19 @@
+# Maintainer: Keiran <keircn@proton.me>
+
+pkgname=roxyos-sddm
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Roxy Migurdia themed SDDM configuration"
+arch=('any')
+url="https://github.com/keircn/RoxyOS"
+license=('MIT')
+depends=('sddm')
+options=('!strip')
+
+package() {
+    cp -r "${startdir}/usr" "${pkgdir}/"
+    
+    mkdir -p "${pkgdir}/etc/sddm.conf.d"
+    install -Dm644 "${startdir}/usr/share/sddm/themes/roxyos/roxyos.conf" \
+        "${pkgdir}/etc/sddm.conf.d/roxyos.conf"
+}

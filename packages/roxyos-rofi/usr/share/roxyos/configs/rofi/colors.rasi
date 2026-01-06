@@ -1,0 +1,39 @@
+* {
+    background: #0a1628;
+    background-light: #1c2833;
+    background-lighter: #2980b9;
+
+    accent: #5dade2;
+    accent-light: #85c1e9;
+    accent-dark: #1a5276;
+
+    foreground: #e8f4fc;
+    foreground-dim: #a8c8d8;
+    foreground-dimmer: #5dade2;
+
+    selected: #1a5276;
+    selected-active: #2980b9;
+    selected-urgent: #8b4a2b;
+
+    active: #4a6b5a;
+    urgent: #8b4a2b;
+    warning: #c9a227;
+
+    border: #5dade2;
+    separator: #5dade280;
+    shadow: #1a527680;
+    cursor: #5dade2;
+
+    normal-bg: #0a1628;
+    active-bg: #1a5276;
+    urgent-bg: #8b4a2b;
+    selected-bg: #2980b9;
+
+    normal-fg: #e8f4fc;
+    active-fg: #e8f4fc;
+    urgent-fg: #e8f4fc;
+    selected-fg: #0a1628;
+
+    error-bg: #8b4a2b;
+    success-bg: #4a6b5a;
+}

@@ -1,0 +1,58 @@
+element {
+    text-color: @foreground;
+    border-radius: 8px;
+    padding: 10px 16px;
+    spacing: 12px;
+}
+
+element normal {
+    background-color: transparent;
+}
+
+element selected {
+    background-color: @selected;
+    text-color: @selected-fg;
+}
+
+element alternate {
+    background-color: transparent;
+}
+
+element-text {
+    font: "JetBrainsMono Nerd Font 14";
+    text-color: inherit;
+    vertical-align: 0.5;
+    horizontal-align: 0;
+}
+
+element-icon {
+    size: 24px;
+    text-color: @accent;
+    vertical-align: 0.5;
+    horizontal-align: 0.5;
+}
+
+element selected urgent {
+    background-color: @selected-urgent;
+    text-color: @foreground;
+}
+
+element selected active {
+    background-color: @selected-active;
+    text-color: @foreground;
+}
+
+element active.normal {
+    background-color: @active;
+    text-color: @foreground;
+}
+
+element active.selected {
+    background-color: @active;
+    text-color: @foreground;
+}
+
+element urgent.normal {
+    background-color: @urgent;
+    text-color: @foreground;
+}

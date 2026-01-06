@@ -1,0 +1,104 @@
+listview {
+    enabled: true;
+    layout: vertical;
+    spacing: 4px;
+    margin: 0px;
+    padding: 0px;
+    lines: 10;
+    fixed-height: true;
+    dynamic: true;
+    scrollbar: true;
+    scrollbar-width: 8px;
+    scrollbar-handle-width: 4px;
+    scrollbar-color: @accent;
+    scrollbar-background: @background-light;
+    border: 0px;
+    border-color: @separator;
+    border-radius: 8px;
+}
+
+element {
+    enabled: true;
+    padding: 10px 16px;
+    spacing: 12px;
+    margin: 0px;
+    cursor: pointer;
+    border: 0px;
+    border-radius: 8px;
+    border-color: @separator;
+}
+
+element normal.normal {
+    background-color: @normal-bg;
+    text-color: @normal-fg;
+}
+
+element normal.urgent {
+    background-color: @urgent-bg;
+    text-color: @urgent-fg;
+}
+
+element normal.active {
+    background-color: @active-bg;
+    text-color: @active-fg;
+}
+
+element selected.normal {
+    background-color: @selected-bg;
+    text-color: @selected-fg;
+}
+
+element selected.urgent {
+    background-color: @selected-urgent;
+    text-color: @selected-fg;
+}
+
+element selected.active {
+    background-color: @selected-active;
+    text-color: @selected-fg;
+}
+
+element alternate.normal {
+    background-color: @background-light;
+    text-color: @foreground-dim;
+}
+
+element alternate.urgent {
+    background-color: @urgent-bg;
+    text-color: @urgent-fg;
+}
+
+element alternate.active {
+    background-color: @active-bg;
+    text-color: @active-fg;
+}
+
+element-text {
+    enabled: true;
+    font: "JetBrainsMono Nerd Font 14";
+    text-color: inherit;
+    cursor: inherit;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+}
+
+element-icon {
+    enabled: true;
+    size: 24px;
+    text-color: inherit;
+    cursor: inherit;
+    vertical-align: 0.5;
+    horizontal-align: 0.5;
+}
+
+element-count {
+    enabled: false;
+}
+
+element-url {
+    enabled: false;
+}
+
+element-image {
+    enabled: false;
+}

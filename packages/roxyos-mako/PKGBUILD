@@ -1,0 +1,15 @@
+# Maintainer: Keiran <keircn@proton.me>
+
+pkgname=roxyos-mako
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Roxy Migurdia themed Mako notification daemon configuration"
+arch=('any')
+url="https://github.com/keircn/RoxyOS"
+license=('MIT')
+depends=('mako')
+options=('!strip')
+
+package() {
+    cp -r "${startdir}/usr" "${pkgdir}/"
+}

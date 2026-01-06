@@ -1,0 +1,32 @@
+post_install() {
+  echo ""
+  echo "╔════════════════════════════════════════════════════════════╗"
+  echo "║                    Welcome to RoxyOS!                      ║"
+  echo "╠════════════════════════════════════════════════════════════╣"
+  echo "║            Configurations installed succesfully!           ║"
+  echo "╚════════════════════════════════════════════════════════════╝"
+  echo ""
+  echo "Next steps:"
+  echo "  1. Run 'roxyos-setup' to configure your system"
+  echo "  2. Choose your display manager (SDDM or ly)"
+  echo "  3. Set up your wallpaper and theme preferences"
+  echo ""
+  echo "Documentation: /usr/share/doc/roxyos/README.md"
+  echo ""
+}
+
+post_upgrade() {
+  if [ "$(vercmp "$2" "1.0.0")" -lt 0 ]; then
+    echo ""
+    echo "RoxyOS has been updated!"
+    echo "Run 'roxyos-apply' to apply new configurations."
+    echo ""
+  fi
+}
+
+post_remove() {
+  echo ""
+  echo "RoxyOS has been removed."
+  echo "Manual cleanup may be required for display managers."
+  echo ""
+}

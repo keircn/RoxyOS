@@ -1,0 +1,71 @@
+format = """$directory\
+$git_branch\
+$git_state\
+$git_status\
+$character"""
+
+add_newline = true
+
+[directory]
+truncation_length = 3
+truncation_symbol = "…/"
+style = "blue"
+format = "[$path]($style) "
+
+[git_branch]
+symbol = " "
+style = "magenta"
+format = "[$symbol$branch]($style) "
+
+[git_state]
+style = "yellow"
+format = "[($state $progress_text)]($style) "
+
+[git_status]
+style = "green"
+format = "[$all_status$ahead_behind]($style) "
+
+[character]
+success_symbol = "[](cyan)"
+error_symbol = "[](red)"
+vimcmd_symbol = "[](green)"
+format = "$symbol "
+
+[battery]
+disabled = true
+
+[time]
+disabled = true
+
+[memory]
+disabled = true
+
+[package]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[rust]
+disabled = true
+
+[golang]
+disabled = true
+
+[python]
+disabled = true
+
+[java]
+disabled = true
+
+[kubernetes]
+disabled = true
+
+[docker_context]
+disabled = true
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true

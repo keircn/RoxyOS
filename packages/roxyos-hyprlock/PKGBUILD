@@ -1,0 +1,15 @@
+# Maintainer: Keiran <keircn@proton.me>
+
+pkgname=roxyos-hyprlock
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Roxy Migurdia themed Hyprlock configuration"
+arch=('any')
+url="https://github.com/keircn/RoxyOS"
+license=('MIT')
+depends=('hyprlock')
+options=('!strip')
+
+package() {
+    cp -r "${startdir}/usr" "${pkgdir}/"
+}
