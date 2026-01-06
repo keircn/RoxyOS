@@ -1,7 +1,7 @@
 # Maintainer: Keiran <keircn@proton.me>
 
 pkgname=roxyos-rofi
-pkgver=1.0.0
+pkgver=1.0.1
 pkgrel=1
 pkgdesc="Roxy Migurdia themed Rofi configuration"
 arch=('any')

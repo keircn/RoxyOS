@@ -1,7 +1,7 @@
 # Maintainer: Keiran <keircn@proton.me>
 
 pkgname=roxyos
-pkgver=1.0.0
+pkgver=1.0.1
 pkgrel=1
 pkgdesc="Roxy Migurdia themed metapackage for Arch Linux with Niri, waybar, and beautiful configurations"
 arch=('any')
