@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -226,27 +225,19 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 
 func (m model) runInstall() tea.Cmd {
 	return func() tea.Msg {
-		home, _ := os.UserHomeDir()
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return doneMsg{err}
+		}
+
 		configDir := filepath.Join(home, ".config")
 		dataDir := filepath.Join(home, ".local", "share")
+		backupDir := filepath.Join(dataDir, "roxyos", "backups")
 		roxyosDir := "/usr/share/roxyos"
 
-		dirs := []string{
-			filepath.Join(configDir, "niri"),
-			filepath.Join(configDir, "waybar"),
-			filepath.Join(configDir, "kitty"),
-			filepath.Join(configDir, "rofi"),
-			filepath.Join(configDir, "fish"),
-			filepath.Join(configDir, "mako"),
-			filepath.Join(configDir, "starship"),
-			filepath.Join(dataDir, "roxyos"),
-			filepath.Join(dataDir, "wallpapers"),
-		}
+		os.MkdirAll(backupDir, 0755)
 
-		for _, dir := range dirs {
-			os.MkdirAll(dir, 0755)
-		}
-
+		installed := 0
 		for _, comp := range m.components {
 			if !comp.enabled {
 				continue
@@ -261,15 +252,21 @@ func (m model) runInstall() tea.Cmd {
 				os.MkdirAll(filepath.Join(configDir, "hypr"), 0755)
 			}
 
+			if comp.name == "starship" {
+				src = filepath.Join(roxyosDir, "configs", "starship")
+				dst = filepath.Join(configDir, "starship")
+			}
+
 			if _, err := os.Stat(src); err == nil {
-				copyDir(src, dst)
+				if err := copyDir(src, dst); err != nil {
+					return doneMsg{fmt.Errorf("failed to copy %s: %w", comp.name, err)}
+				}
+				installed++
 			}
 		}
 
-		if m.selectedDM == "sddm" {
-			exec.Command("sudo", "systemctl", "enable", "sddm").Run()
-		} else if m.selectedDM == "ly" {
-			exec.Command("sudo", "systemctl", "enable", "ly").Run()
+		if installed == 0 {
+			return doneMsg{fmt.Errorf("no configurations were installed")}
 		}
 
 		return doneMsg{nil}
@@ -400,17 +397,14 @@ func (m model) viewBackup() string {
 }
 
 func (m model) viewInstall() string {
-	var logs string
-	for _, log := range m.logs {
-		logs += log + "\n"
-	}
+	status := "Copying configurations to ~/.config..."
 
 	return lipgloss.JoinVertical(lipgloss.Center,
 		titleStyle.Render("Installing RoxyOS"),
 		"",
-		fmt.Sprintf("%s Installing configurations...", m.spinner.View()),
+		fmt.Sprintf("%s %s", m.spinner.View(), status),
 		"",
-		boxStyle.Render(logs),
+		mutedStyle.Render("Please wait..."),
 	)
 }
 
@@ -425,18 +419,33 @@ func (m model) viewComplete() string {
 		)
 	}
 
+	dmInstructions := ""
+	if m.selectedDM == "sddm" {
+		dmInstructions = "sudo systemctl enable sddm"
+	} else if m.selectedDM == "ly" {
+		dmInstructions = "sudo systemctl enable ly"
+	}
+
+	nextSteps := []string{
+		"Next steps:",
+		"",
+	}
+
+	if dmInstructions != "" {
+		nextSteps = append(nextSteps, fmt.Sprintf("  1. Enable display manager: %s", accentStyle.Render(dmInstructions)))
+		nextSteps = append(nextSteps, "  2. Reboot your system")
+		nextSteps = append(nextSteps, "  3. Select 'Niri' from your display manager")
+	} else {
+		nextSteps = append(nextSteps, "  1. Log out of your current session")
+		nextSteps = append(nextSteps, "  2. Start Niri manually or via your preferred method")
+	}
+
 	return lipgloss.JoinVertical(lipgloss.Center,
-		successStyle.Render("✓ Installation Complete"),
+		successStyle.Render(" Installation Complete"),
 		"",
 		"RoxyOS has been configured successfully!",
 		"",
-		boxStyle.Render(lipgloss.JoinVertical(lipgloss.Left,
-			"Next steps:",
-			"",
-			"  1. Log out of your current session",
-			"  2. Select 'Niri' from your display manager",
-			"  3. Enjoy your new desktop!",
-		)),
+		boxStyle.Render(lipgloss.JoinVertical(lipgloss.Left, nextSteps...)),
 		"",
 		"Keybindings:",
 		fmt.Sprintf("  %s  Terminal", accentStyle.Render("Super+T")),
