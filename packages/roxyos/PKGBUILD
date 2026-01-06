@@ -38,10 +38,17 @@ optdepends=(
     'roxyos-sddm: SDDM display manager theme'
     'roxyos-ly: ly console display manager theme'
     'roxyos-setup: TUI setup wizard'
+    'roxyos-ghostty: Ghostty terminal configuration'
     'nwg-look: GTK settings utility'
     'qt5ct: Qt5 settings utility'
     'qt6ct: Qt6 settings utility'
     'ghostty: Alternative terminal emulator'
+    'yazi: Terminal file manager'
+    'swaync: Notification center'
+    'playerctl: Media player control'
+    'brightnessctl: Brightness control'
+    'grim: Screenshot utility'
+    'slurp: Region selection for screenshots'
 )
 backup=(
     'etc/roxyos/setup.conf'

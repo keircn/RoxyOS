@@ -83,6 +83,11 @@ binds {
     Mod+T { spawn "kitty"; }
     Mod+D { spawn "rofi" "-show" "drun"; }
     Mod+L { spawn "hyprlock"; }
+    Mod+P { spawn "sh" "-c" "cliphist list | rofi -dmenu | cliphist decode | wl-copy"; }
+    Mod+Shift+D { spawn "rofi" "-show" "run"; }
+    Mod+Tab { spawn "rofi" "-show" "window"; }
+    Mod+E { spawn "kitty" "-e" "yazi"; }
+    Mod+N { spawn "swaync-client" "-t"; }
 
     Mod+Q { close-window; }
 
@@ -225,3 +230,5 @@ binds {
 
     Mod+Shift+P { power-off-monitors; }
 }
+
+source "~/.config/niri/custom.kdl"

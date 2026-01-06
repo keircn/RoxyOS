@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -12,35 +13,25 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const (
+	repoURL  = "https://repo.roxyproxy.de/roxyos"
+	repoName = "roxyos"
+)
+
 var (
-	primaryColor = lipgloss.Color("#1a5276")
 	accentColor  = lipgloss.Color("#5dade2")
-	bgColor      = lipgloss.Color("#0a1628")
-	textColor    = lipgloss.Color("#e8f4fc")
 	mutedColor   = lipgloss.Color("#a8c8d8")
 	successColor = lipgloss.Color("#4a6b5a")
 	errorColor   = lipgloss.Color("#8b4a2b")
-	warningColor = lipgloss.Color("#c9a227")
 
-	titleStyle = lipgloss.NewStyle().
-			Foreground(accentColor).
-			Bold(true).
-			MarginBottom(1)
-
-	subtitleStyle = lipgloss.NewStyle().
-			Foreground(mutedColor).
-			MarginBottom(2)
-
-	boxStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(accentColor).
-			Padding(1, 2)
-
-	successStyle = lipgloss.NewStyle().Foreground(successColor)
-	errorStyle   = lipgloss.NewStyle().Foreground(errorColor)
-	infoStyle    = lipgloss.NewStyle().Foreground(accentColor)
-	mutedStyle   = lipgloss.NewStyle().Foreground(mutedColor)
-	accentStyle  = lipgloss.NewStyle().Foreground(accentColor)
+	titleStyle    = lipgloss.NewStyle().Foreground(accentColor).Bold(true).MarginBottom(1)
+	subtitleStyle = lipgloss.NewStyle().Foreground(mutedColor).MarginBottom(2)
+	boxStyle      = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(accentColor).Padding(1, 2)
+	successStyle  = lipgloss.NewStyle().Foreground(successColor)
+	errorStyle    = lipgloss.NewStyle().Foreground(errorColor)
+	infoStyle     = lipgloss.NewStyle().Foreground(accentColor)
+	mutedStyle    = lipgloss.NewStyle().Foreground(mutedColor)
+	accentStyle   = lipgloss.NewStyle().Foreground(accentColor)
 )
 
 type step int
@@ -49,16 +40,18 @@ const (
 	stepWelcome step = iota
 	stepSelectDM
 	stepSelectComponents
-	stepBackup
+	stepConfirm
 	stepInstall
-	stepPlymouth
+	stepApplyConfigs
 	stepComplete
 )
 
 type component struct {
 	name        string
+	pkg         string
 	description string
 	enabled     bool
+	isCore      bool
 }
 
 type model struct {
@@ -69,23 +62,21 @@ type model struct {
 	components    []component
 	cursor        int
 	selectedDM    string
-	backupPath    string
 	logs          []string
 	err           error
-	installing    bool
-	done          bool
+	installStatus string
 }
 
-type dmItem struct {
-	name, desc string
-}
+type dmItem struct{ name, desc string }
 
 func (i dmItem) Title() string       { return i.name }
 func (i dmItem) Description() string { return i.desc }
 func (i dmItem) FilterValue() string { return i.name }
 
-type installMsg struct{ log string }
-type doneMsg struct{ err error }
+type (
+	installLogMsg  struct{ log string }
+	installDoneMsg struct{ err error }
+)
 
 func initialModel() model {
 	s := spinner.New()
@@ -93,9 +84,9 @@ func initialModel() model {
 	s.Style = lipgloss.NewStyle().Foreground(accentColor)
 
 	items := []list.Item{
-		dmItem{"sddm", "Simple Desktop Display Manager with RoxyOS theme"},
-		dmItem{"ly", "TUI display manager for console lovers"},
-		dmItem{"none", "Skip display manager configuration"},
+		dmItem{"ly", "Console-based display manager (lightweight)"},
+		dmItem{"sddm", "Graphical display manager with RoxyOS theme"},
+		dmItem{"none", "Skip display manager"},
 	}
 
 	delegate := list.NewDefaultDelegate()
@@ -113,14 +104,16 @@ func initialModel() model {
 		spinner: s,
 		dmList:  dmList,
 		components: []component{
-			{"niri", "Niri window manager configuration", true},
-			{"waybar", "Status bar configuration", true},
-			{"hyprlock", "Lock screen configuration", true},
-			{"kitty", "Terminal emulator configuration", true},
-			{"rofi", "Application launcher configuration", true},
-			{"fish", "Fish shell and Starship prompt", true},
-			{"mako", "Notification daemon configuration", true},
-			{"plymouth", "Boot splash theme", true},
+			{"Niri", "roxyos-niri", "Scrolling window manager", true, true},
+			{"Waybar", "roxyos-waybar", "Status bar", true, true},
+			{"Rofi", "roxyos-rofi", "Application launcher", true, true},
+			{"Hyprlock", "roxyos-hyprlock", "Lock screen", true, false},
+			{"Kitty", "roxyos-kitty", "GPU-accelerated terminal", true, false},
+			{"Ghostty", "roxyos-ghostty", "Modern terminal emulator", false, false},
+			{"Fish", "roxyos-fish", "Shell with Starship prompt", true, false},
+			{"Mako", "roxyos-mako", "Notification daemon", true, false},
+			{"Plymouth", "roxyos-plymouth", "Boot splash theme", false, false},
+			{"Assets", "roxyos-assets", "Wallpapers and themes", true, false},
 		},
 	}
 }
@@ -139,7 +132,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
-			if m.step != stepInstall {
+			if m.step != stepInstall && m.step != stepApplyConfigs {
 				return m, tea.Quit
 			}
 		case "enter":
@@ -153,20 +146,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case " ":
-			if m.step == stepSelectComponents {
+			if m.step == stepSelectComponents && !m.components[m.cursor].isCore {
 				m.components[m.cursor].enabled = !m.components[m.cursor].enabled
 			}
 		case "a":
 			if m.step == stepSelectComponents {
 				allEnabled := true
 				for _, c := range m.components {
-					if !c.enabled {
+					if !c.enabled && !c.isCore {
 						allEnabled = false
 						break
 					}
 				}
 				for i := range m.components {
-					m.components[i].enabled = !allEnabled
+					if !m.components[i].isCore {
+						m.components[i].enabled = !allEnabled
+					}
 				}
 			}
 		}
@@ -176,18 +171,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.spinner, cmd = m.spinner.Update(msg)
 		return m, cmd
 
-	case installMsg:
+	case installLogMsg:
+		m.installStatus = msg.log
 		m.logs = append(m.logs, msg.log)
-		if len(m.logs) > 10 {
+		if len(m.logs) > 5 {
 			m.logs = m.logs[1:]
 		}
 		return m, nil
 
-	case doneMsg:
-		m.installing = false
-		m.done = true
-		m.err = msg.err
-		if msg.err == nil {
+	case installDoneMsg:
+		if msg.err != nil {
+			m.err = msg.err
+			m.step = stepComplete
+		} else if m.step == stepInstall {
+			m.step = stepApplyConfigs
+			return m, m.applyConfigs()
+		} else {
 			m.step = stepComplete
 		}
 		return m, nil
@@ -212,10 +211,9 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 		}
 		m.step = stepSelectComponents
 	case stepSelectComponents:
-		m.step = stepBackup
-	case stepBackup:
+		m.step = stepConfirm
+	case stepConfirm:
 		m.step = stepInstall
-		m.installing = true
 		return m, m.runInstall()
 	case stepComplete:
 		return m, tea.Quit
@@ -225,52 +223,133 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 
 func (m model) runInstall() tea.Cmd {
 	return func() tea.Msg {
+		if err := ensureRepo(); err != nil {
+			return installDoneMsg{fmt.Errorf("failed to add repo: %w", err)}
+		}
+
+		packages := m.getSelectedPackages()
+		if len(packages) == 0 {
+			return installDoneMsg{fmt.Errorf("no packages selected")}
+		}
+
+		args := append([]string{"-S", "--noconfirm", "--needed"}, packages...)
+		cmd := exec.Command("sudo", append([]string{"pacman"}, args...)...)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Stdin = os.Stdin
+
+		if err := cmd.Run(); err != nil {
+			return installDoneMsg{fmt.Errorf("pacman failed: %w", err)}
+		}
+
+		return installDoneMsg{nil}
+	}
+}
+
+func (m model) applyConfigs() tea.Cmd {
+	return func() tea.Msg {
 		home, err := os.UserHomeDir()
 		if err != nil {
-			return doneMsg{err}
+			return installDoneMsg{err}
 		}
 
 		configDir := filepath.Join(home, ".config")
-		dataDir := filepath.Join(home, ".local", "share")
-		backupDir := filepath.Join(dataDir, "roxyos", "backups")
-		roxyosDir := "/usr/share/roxyos"
+		roxyosDir := "/usr/share/roxyos/configs"
 
-		os.MkdirAll(backupDir, 0755)
+		configMap := map[string]string{
+			"roxyos-niri":    "niri",
+			"roxyos-waybar":  "waybar",
+			"roxyos-rofi":    "rofi",
+			"roxyos-kitty":   "kitty",
+			"roxyos-ghostty": "ghostty",
+			"roxyos-fish":    "fish",
+			"roxyos-mako":    "mako",
+		}
 
-		installed := 0
 		for _, comp := range m.components {
 			if !comp.enabled {
 				continue
 			}
 
-			src := filepath.Join(roxyosDir, "configs", comp.name)
-			dst := filepath.Join(configDir, comp.name)
-
-			if comp.name == "hyprlock" {
-				src = filepath.Join(roxyosDir, "configs", "hyprlock.conf")
-				dst = filepath.Join(configDir, "hypr", "hyprlock.conf")
-				os.MkdirAll(filepath.Join(configDir, "hypr"), 0755)
+			configName, ok := configMap[comp.pkg]
+			if !ok {
+				continue
 			}
 
-			if comp.name == "starship" {
-				src = filepath.Join(roxyosDir, "configs", "starship")
-				dst = filepath.Join(configDir, "starship")
-			}
+			src := filepath.Join(roxyosDir, configName)
+			dst := filepath.Join(configDir, configName)
 
 			if _, err := os.Stat(src); err == nil {
 				if err := copyDir(src, dst); err != nil {
-					return doneMsg{fmt.Errorf("failed to copy %s: %w", comp.name, err)}
+					return installDoneMsg{fmt.Errorf("failed to copy %s config: %w", configName, err)}
 				}
-				installed++
 			}
 		}
 
-		if installed == 0 {
-			return doneMsg{fmt.Errorf("no configurations were installed")}
+		for _, comp := range m.components {
+			if comp.pkg == "roxyos-hyprlock" && comp.enabled {
+				src := filepath.Join(roxyosDir, "hyprlock.conf")
+				dst := filepath.Join(configDir, "hypr", "hyprlock.conf")
+				os.MkdirAll(filepath.Join(configDir, "hypr"), 0755)
+				if _, err := os.Stat(src); err == nil {
+					data, _ := os.ReadFile(src)
+					os.WriteFile(dst, data, 0644)
+				}
+			}
+
+			if comp.pkg == "roxyos-fish" && comp.enabled {
+				src := filepath.Join(roxyosDir, "starship")
+				dst := filepath.Join(configDir, "starship")
+				if _, err := os.Stat(src); err == nil {
+					copyDir(src, dst)
+				}
+			}
 		}
 
-		return doneMsg{nil}
+		if m.selectedDM == "sddm" || m.selectedDM == "ly" {
+			exec.Command("sudo", "systemctl", "enable", m.selectedDM).Run()
+		}
+
+		return installDoneMsg{nil}
 	}
+}
+
+func ensureRepo() error {
+	data, err := os.ReadFile("/etc/pacman.conf")
+	if err != nil {
+		return err
+	}
+
+	if strings.Contains(string(data), "["+repoName+"]") {
+		return nil
+	}
+
+	repoBlock := fmt.Sprintf("\n[%s]\nSigLevel = Optional TrustAll\nServer = %s\n", repoName, repoURL)
+
+	cmd := exec.Command("sudo", "sh", "-c", fmt.Sprintf("echo '%s' >> /etc/pacman.conf && pacman -Sy", repoBlock))
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	return cmd.Run()
+}
+
+func (m model) getSelectedPackages() []string {
+	var packages []string
+
+	for _, comp := range m.components {
+		if comp.enabled {
+			packages = append(packages, comp.pkg)
+		}
+	}
+
+	if m.selectedDM == "sddm" {
+		packages = append(packages, "roxyos-sddm")
+	} else if m.selectedDM == "ly" {
+		packages = append(packages, "roxyos-ly")
+	}
+
+	return packages
 }
 
 func copyDir(src, dst string) error {
@@ -284,6 +363,12 @@ func copyDir(src, dst string) error {
 
 		if info.IsDir() {
 			return os.MkdirAll(dstPath, info.Mode())
+		}
+
+		if strings.HasPrefix(filepath.Base(path), "custom.") {
+			if _, err := os.Stat(dstPath); err == nil {
+				return nil
+			}
 		}
 
 		data, err := os.ReadFile(path)
@@ -305,10 +390,12 @@ func (m model) View() string {
 		content = m.viewSelectDM()
 	case stepSelectComponents:
 		content = m.viewSelectComponents()
-	case stepBackup:
-		content = m.viewBackup()
+	case stepConfirm:
+		content = m.viewConfirm()
 	case stepInstall:
-		content = m.viewInstall()
+		content = m.viewInstall("Installing packages...")
+	case stepApplyConfigs:
+		content = m.viewInstall("Applying configurations...")
 	case stepComplete:
 		content = m.viewComplete()
 	}
@@ -332,7 +419,9 @@ func (m model) viewWelcome() string {
 		"",
 		subtitleStyle.Render("Roxy Migurdia themed Niri configuration for Arch Linux"),
 		"",
-		infoStyle.Render("Press Enter to begin setup"),
+		boxStyle.Render("This wizard will:\n\n  1. Add the RoxyOS repository\n  2. Install selected packages via pacman\n  3. Apply configurations to ~/.config"),
+		"",
+		infoStyle.Render("Press Enter to begin"),
 		mutedStyle.Render("Press q to quit"),
 	)
 }
@@ -343,7 +432,7 @@ func (m model) viewSelectDM() string {
 		"",
 		m.dmList.View(),
 		"",
-		mutedStyle.Render("↑/↓ navigate • enter select"),
+		mutedStyle.Render("↑/↓ navigate  enter select"),
 	)
 }
 
@@ -353,12 +442,12 @@ func (m model) viewSelectComponents() string {
 	for i, comp := range m.components {
 		cursor := "  "
 		if i == m.cursor {
-			cursor = "▸ "
+			cursor = " "
 		}
 
-		check := "○"
+		check := ""
 		if comp.enabled {
-			check = successStyle.Render("●")
+			check = successStyle.Render("")
 		}
 
 		name := comp.name
@@ -366,52 +455,60 @@ func (m model) viewSelectComponents() string {
 			name = accentStyle.Render(comp.name)
 		}
 
-		items = append(items, fmt.Sprintf("%s%s %s  %s", cursor, check, name, mutedStyle.Render(comp.description)))
+		core := ""
+		if comp.isCore {
+			core = mutedStyle.Render(" (required)")
+		}
+
+		items = append(items, fmt.Sprintf("%s%s %s%s  %s", cursor, check, name, core, mutedStyle.Render(comp.description)))
 	}
 
 	return lipgloss.JoinVertical(lipgloss.Left,
 		titleStyle.Render("Select Components"),
-		subtitleStyle.Render("Choose which configurations to install"),
+		subtitleStyle.Render("Choose which packages to install"),
 		"",
 		strings.Join(items, "\n"),
 		"",
-		mutedStyle.Render("↑/↓ navigate • space toggle • a toggle all • enter continue"),
+		mutedStyle.Render("↑/↓ navigate  space toggle  a toggle all  enter continue"),
 	)
 }
 
-func (m model) viewBackup() string {
+func (m model) viewConfirm() string {
+	packages := m.getSelectedPackages()
+
+	var pkgList []string
+	for _, pkg := range packages {
+		pkgList = append(pkgList, successStyle.Render("")+" "+pkg)
+	}
+
 	return lipgloss.JoinVertical(lipgloss.Center,
-		titleStyle.Render("Ready to Install"),
+		titleStyle.Render("Confirm Installation"),
 		"",
-		"The following will be configured:",
+		"The following packages will be installed:",
 		"",
-		m.getSelectedSummary(),
+		strings.Join(pkgList, "\n"),
 		"",
-		fmt.Sprintf("Display Manager: %s", accentStyle.Render(m.selectedDM)),
-		"",
-		boxStyle.Render("Existing configurations will be backed up to\n~/.local/share/roxyos/backups/"),
+		boxStyle.Render("This will:\n  Add RoxyOS repo to /etc/pacman.conf\n  Install packages via pacman\n  Copy configs to ~/.config"),
 		"",
 		infoStyle.Render("Press Enter to install"),
 		mutedStyle.Render("Press q to cancel"),
 	)
 }
 
-func (m model) viewInstall() string {
-	status := "Copying configurations to ~/.config..."
-
+func (m model) viewInstall(status string) string {
 	return lipgloss.JoinVertical(lipgloss.Center,
 		titleStyle.Render("Installing RoxyOS"),
 		"",
 		fmt.Sprintf("%s %s", m.spinner.View(), status),
 		"",
-		mutedStyle.Render("Please wait..."),
+		mutedStyle.Render("This may take a moment..."),
 	)
 }
 
 func (m model) viewComplete() string {
 	if m.err != nil {
 		return lipgloss.JoinVertical(lipgloss.Center,
-			errorStyle.Render("Installation Failed"),
+			errorStyle.Render(" Installation Failed"),
 			"",
 			m.err.Error(),
 			"",
@@ -419,31 +516,19 @@ func (m model) viewComplete() string {
 		)
 	}
 
-	dmInstructions := ""
-	if m.selectedDM == "sddm" {
-		dmInstructions = "sudo systemctl enable sddm"
-	} else if m.selectedDM == "ly" {
-		dmInstructions = "sudo systemctl enable ly"
-	}
+	nextSteps := []string{"Next steps:", ""}
 
-	nextSteps := []string{
-		"Next steps:",
-		"",
-	}
-
-	if dmInstructions != "" {
-		nextSteps = append(nextSteps, fmt.Sprintf("  1. Enable display manager: %s", accentStyle.Render(dmInstructions)))
-		nextSteps = append(nextSteps, "  2. Reboot your system")
-		nextSteps = append(nextSteps, "  3. Select 'Niri' from your display manager")
+	if m.selectedDM != "none" && m.selectedDM != "" {
+		nextSteps = append(nextSteps, "  1. Reboot your system")
+		nextSteps = append(nextSteps, "  2. Select 'Niri' from the login screen")
 	} else {
-		nextSteps = append(nextSteps, "  1. Log out of your current session")
-		nextSteps = append(nextSteps, "  2. Start Niri manually or via your preferred method")
+		nextSteps = append(nextSteps, "  1. Log out and start Niri manually")
 	}
 
 	return lipgloss.JoinVertical(lipgloss.Center,
 		successStyle.Render(" Installation Complete"),
 		"",
-		"RoxyOS has been configured successfully!",
+		"RoxyOS has been installed and configured!",
 		"",
 		boxStyle.Render(lipgloss.JoinVertical(lipgloss.Left, nextSteps...)),
 		"",
@@ -451,19 +536,10 @@ func (m model) viewComplete() string {
 		fmt.Sprintf("  %s  Terminal", accentStyle.Render("Super+T")),
 		fmt.Sprintf("  %s  Launcher", accentStyle.Render("Super+D")),
 		fmt.Sprintf("  %s  Lock", accentStyle.Render("Super+L")),
+		fmt.Sprintf("  %s  Clipboard", accentStyle.Render("Super+P")),
 		"",
 		mutedStyle.Render("Press Enter to exit"),
 	)
-}
-
-func (m model) getSelectedSummary() string {
-	var selected []string
-	for _, comp := range m.components {
-		if comp.enabled {
-			selected = append(selected, successStyle.Render("• ")+comp.name)
-		}
-	}
-	return strings.Join(selected, "\n")
 }
 
 func min(a, b int) int {

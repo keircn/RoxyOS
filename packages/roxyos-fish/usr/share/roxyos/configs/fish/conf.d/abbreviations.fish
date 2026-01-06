@@ -35,44 +35,12 @@ abbr -a lh ls -lh
 abbr -a ls ls --color=auto
 abbr -a lsl ls -l
 
-abbr -a rm rm -i
-abbr -a cp cp -i
-abbr -a mv mv -i
-
 abbr -a df df -h
 abbr -a du du -sh
 
-abbr -a pacs pacman -S
-abbr -a pacr pacman -R
-abbr -a pacq pacman -Q
-abbr -a pacu pacman -U
-abbr -a pacsy pacman -Sy
-abbr -a pacsuy pacman -Syu
-
-abbr -a yays yay -S
-abbr -a parus paru -S
+abbr -a p paru
 
 abbr -a n nvim
 abbr -a v nvim
 abbr -a vi nvim
 abbr -a vim nvim
-
-abbr -a d docker
-abbr -a dc docker-compose
-abbr -a dcu docker-compose up
-abbr -a dcd docker-compose down
-abbr -a dps docker ps
-abbr -a di docker images
-
-abbr -a k kubectl
-abbr -a kd kubectl describe
-abbr -a kg kubectl get
-
-abbr -a cb cargo build
-abbr -a cr cargo run
-abbr -a ct cargo test
-abbr -a cbr cargo build --release
-
-abbr -a c clear
-abbr -a h history
-abbr -a j jobs

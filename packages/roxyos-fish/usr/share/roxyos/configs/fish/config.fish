@@ -1,25 +1,3 @@
-if test -f $HOME/.config/fish/env.fish
-    source $HOME/.config/fish/env.fish
-end
-
-if test -f $HOME/.config/fish/conf.d/roxyos-theme.fish
-    source $HOME/.config/fish/conf.d/roxyos-theme.fish
-end
-
-if test -f $HOME/.config/fish/conf.d/roxyos-env.fish
-    source $HOME/.config/fish/conf.d/roxyos-env.fish
-end
-
-if test -f $HOME/.config/fish/conf.d/abbreviations.fish
-    source $HOME/.config/fish/conf.d/abbreviations.fish
-end
-
-if command -q starship
-    starship init fish | source
-end
-
-fish_vi_key_bindings
-
 set -g fish_color_normal e8f4fc
 set -g fish_color_command 5dade2
 set -g fish_color_param 85c1e9
@@ -42,10 +20,68 @@ set -g fish_pager_color_completion e8f4fc
 set -g fish_pager_color_description a8c8d8
 set -g fish_pager_color_progress e8f4fc
 
-if test -z "$ROXYOS_SKIP_WELCOME"
+set -g fish_greeting
+
+set fish_pager_color_prefix cyan
+set fish_color_autosuggestion brblack
+set EDITOR nvim
+
+abbr n nvim
+
+abbr .. 'cd ..'
+abbr ... 'cd ../..'
+abbr .3 'cd ../../..'
+abbr .4 'cd ../../../..'
+abbr .5 'cd ../../../../..'
+
+abbr g git
+abbr ga 'git add'
+abbr gb 'git branch'
+abbr gc 'git commit'
+abbr gca 'git commit --amend'
+abbr gco 'git checkout'
+abbr gd 'git diff'
+abbr gl 'git pull'
+abbr gp 'git push'
+abbr gst 'git status'
+abbr grv 'git remote -v'
+abbr glg 'git log --oneline --graph --decorate --all'
+abbr gci 'git commit -a -m "Initial commit"'
+
+abbr mkdir 'mkdir -p'
+abbr df 'df -h'
+abbr du 'du -h --max-depth=1'
+abbr free 'free -h'
+abbr pls sudo
+
+fish_vi_key_bindings
+
+if command -q starship
+    starship init fish | source
+end
+
+function roxyos_welcome
+    set -l cols (tput cols)
+    set -l box "╭────────────────────────────────────╮"
+    set -l mid "│       Welcome to RoxyOS            │"
+    set -l bot "╰────────────────────────────────────╯"
+    set -l box_width 38
+    set -l pad (math "($cols - $box_width) / 2")
+    set -l padding (string repeat -n $pad " ")
     echo ""
-    echo -e "\033[38;5;74m╭────────────────────────────────────╮\033[0m"
-    echo -e "\033[38;5;74m│\033[0m   \033[38;5;117mWelcome to RoxyOS\033[0m               \033[38;5;74m│\033[0m"
-    echo -e "\033[38;5;74m╰────────────────────────────────────╯\033[0m"
+    set_color 5dade2
+    echo "$padding$box"
+    echo "$padding$mid"
+    echo "$padding$bot"
+    set_color normal
     echo ""
+end
+
+if status is-login; and test -z "$ROXYOS_WELCOMED"
+    set -gx ROXYOS_WELCOMED 1
+    roxyos_welcome
+end
+
+if test -f $HOME/.config/fish/conf.d/custom.fish
+    source $HOME/.config/fish/conf.d/custom.fish
 end

@@ -7,61 +7,51 @@
     "margin-top": 8,
     "spacing": 4,
 
-    "modules-left": ["custom/roxy-logo", "niri/workspaces", "niri/mode"],
+    "modules-left": ["custom/roxy-logo", "niri/workspaces", "niri/window"],
     "modules-center": ["clock"],
-    "modules-right": ["network", "cpu", "memory", "disk", "battery", "backlight", "pulseaudio", "tray", "custom/menu"],
+    "modules-right": ["network", "cpu", "memory", "disk", "pulseaudio", "tray", "custom/menu"],
 
     "niri/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
-        "format": "{name}",
-        "icon-size": 14
+        "format": "{name}"
     },
 
-    "niri/mode": {
-        "format": "<span style=\"color: #5dade2\">{}</span>"
+    "niri/window": {
+        "format": "{}",
+        "max-length": 50,
+        "rewrite": {
+            "(.*) - Mozilla Firefox": " $1",
+            "(.*) - kitty": " $1",
+            "": ""
+        }
     },
 
     "clock": {
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt>{:%H:%M}</tt>",
-        "format": " {:%H:%M}",
-        "format-alt": " {:%H:%M:%S}",
+        "tooltip-format": "{:%Y %B %d}",
+        "format": "{:%H:%M}",
+        "format-alt": "{:%H:%M:%S}",
         "interval": 1
     },
 
     "network": {
         "format-wifi": " {essid}",
         "format-ethernet": " {ipaddr}",
-        "format-disconnected": " disconnected",
+        "format-disconnected": "",
         "tooltip-format": "{ifname}: {ipaddr}",
-        "on-click": "networkmanager_dmenu"
+        "on-click": "kitty -e nmtui"
     },
 
     "cpu": { "format": " {usage}%", "interval": 5 },
     "memory": { "format": " {percentage}%", "interval": 5 },
     "disk": { "format": " {free}", "path": "/", "interval": 30 },
 
-    "battery": {
-        "states": { "warning": 30, "critical": 15 },
-        "format": "{capacity}% {icon}",
-        "format-charging": " {capacity}%",
-        "format-plugged": " {capacity}%",
-        "format-alt": "{icon} {time}",
-        "interval": 5
-    },
-
-    "backlight": {
-        "format": " {percent}%",
-        "on-scroll-down": "brightnessctl set 5%-",
-        "on-scroll-up": "brightnessctl set +5%"
-    },
-
     "pulseaudio": {
         "format": "{volume}% {icon}",
         "format-muted": " muted",
-        "format-icons": { "default": ["", "", "", ""] },
+        "format-icons": { "default": ["", "", ""] },
         "on-click": "pavucontrol",
-        "on-click-right": "pamixer -t",
+        "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "scroll-step": 5
     },
 
@@ -69,13 +59,13 @@
 
     "custom/roxy-logo": {
         "format": "",
-        "tooltip": "RoxyOS",
-        "on-click": "rofi -show drun"
+        "tooltip": false,
+        "on-click": "rofi -show drun -show-icons"
     },
 
     "custom/menu": {
         "format": "",
-        "tooltip": "Menu",
+        "tooltip": false,
         "on-click": "rofi -show drun -show-icons"
     }
 }

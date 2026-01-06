@@ -1,45 +1,30 @@
-layer=top
+sort=-time
+layer=overlay
 anchor=top-right
-margin=20,20
-spacing=10
-
-background-color=#0a1628dd
-text-color=#e8f4fc
-border-color=#5dade2
-border-width=2
-border-radius=8
-
 width=400
-height=200
-max-height=400
-
-font=JetBrainsMono Nerd Font 12
-icons=true
-
-default-timeout=3000
-dnd-timeout=0
-
-actions=click
-ignore-timeout=1
-
-progress-color=#5dade2
-progress-border-color=#1a5276
-progress-border-size=2
+max-visible=5
+margin=10
+padding=15
+border-size=2
+border-radius=8
+border-color=#5dade2
+background-color=#0a1628ee
+text-color=#e8f4fc
+font=JetBrainsMono Nerd Font 11
+icons=1
+icon-path=/usr/share/icons/Adwaita
+max-icon-size=48
+default-timeout=5000
+ignore-timeout=0
+group-by=app-name
 
 [urgency=low]
 border-color=#4a6b5a
-text-color=#a8c8d8
+default-timeout=3000
 
 [urgency=normal]
 border-color=#5dade2
-text-color=#e8f4fc
-
-[urgency=high]
-border-color=#c9a227
-text-color=#e8f4fc
 
 [urgency=critical]
 border-color=#8b4a2b
-text-color=#e8f4fc
-
-format=<b>%a</b>\n%s\n%b
+default-timeout=0

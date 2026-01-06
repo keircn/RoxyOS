@@ -1,34 +1,99 @@
-@import "colors.rasi"
-@import "listview.rasi"
-@import "inputbar.rasi"
-@import "element.rasi"
+* {
+    bg: #0a1628;
+    bg-alt: #1c2833;
+    fg: #e8f4fc;
+    fg-alt: #a8c8d8;
+    accent: #5dade2;
+    accent-alt: #1a5276;
+    urgent: #8b4a2b;
+    
+    background-color: transparent;
+    text-color: @fg;
+    font: "JetBrainsMono Nerd Font 12";
+}
 
 window {
     width: 600px;
-    height: 500px;
-    margin: 0px;
-    padding: 0px;
-    border: 2px;
+    background-color: @bg;
+    border: 2px solid;
     border-color: @accent;
     border-radius: 12px;
-    background-color: @background;
-    opacity: 0.95;
-    location: center;
-    enabled: true;
+    padding: 20px;
 }
 
 mainbox {
-    enabled: true;
-    orientation: vertical;
     children: [inputbar, listview];
-    margin: 16px;
-    spacing: 16px;
+    spacing: 20px;
 }
 
-sidebar {
-    enabled: false;
+inputbar {
+    children: [prompt, entry];
+    background-color: @bg-alt;
+    border-radius: 8px;
+    padding: 12px;
+    spacing: 10px;
 }
 
-message {
-    enabled: false;
+prompt {
+    text-color: @accent;
+}
+
+entry {
+    placeholder: "Search...";
+    placeholder-color: @fg-alt;
+}
+
+listview {
+    lines: 8;
+    scrollbar: false;
+    spacing: 5px;
+}
+
+element {
+    padding: 10px 15px;
+    border-radius: 8px;
+    spacing: 10px;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: @fg;
+}
+
+element normal.urgent {
+    background-color: @urgent;
+    text-color: @fg;
+}
+
+element normal.active {
+    background-color: @accent-alt;
+    text-color: @fg;
+}
+
+element selected.normal {
+    background-color: @accent-alt;
+    text-color: @fg;
+}
+
+element selected.urgent {
+    background-color: @urgent;
+    text-color: @fg;
+}
+
+element selected.active {
+    background-color: @accent;
+    text-color: @bg;
+}
+
+element alternate.normal {
+    background-color: transparent;
+    text-color: @fg-alt;
+}
+
+element-icon {
+    size: 24px;
+}
+
+element-text {
+    vertical-align: 0.5;
 }

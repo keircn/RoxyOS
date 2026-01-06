@@ -40,12 +40,6 @@ window#waybar {
 #workspaces button.urgent {
     background: #8b4a2b;
     color: #e8f4fc;
-    animation: pulse-urgent 1s infinite;
-}
-
-@keyframes pulse-urgent {
-    0%, 100% { box-shadow: 0 0 5px #8b4a2b; }
-    50% { box-shadow: 0 0 15px #8b4a2b; }
 }
 
 #mode { background: #1a5276; color: #e8f4fc; padding: 0 12px; font-weight: bold; }
@@ -58,14 +52,9 @@ window#waybar {
 
 #network.disconnected { color: #8b4a2b; }
 #battery.warning { color: #c9a227; }
-#battery.critical { color: #8b4a2b; animation: blink-critical 0.5s infinite; }
+#battery.critical { color: #8b4a2b; }
 #battery.charging { color: #4a6b5a; }
 #pulseaudio.muted { color: #8b4a2b; }
-
-@keyframes blink-critical {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
 
 #tray { background: transparent; }
 #tray menu {
