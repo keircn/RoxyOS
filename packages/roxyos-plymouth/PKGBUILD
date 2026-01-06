@@ -1,7 +1,7 @@
 # Maintainer: Keiran <keircn@proton.me>
 
 pkgname=roxyos-plymouth
-pkgver=1.0.3
+pkgver=1.0.4
 pkgrel=1
 pkgdesc="Roxy Migurdia themed Plymouth boot splash"
 arch=('any')
