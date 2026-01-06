@@ -2,7 +2,7 @@
 
 pkgname=roxyos-niri
 pkgver=1.0.1
-pkgrel=1
+pkgrel=2
 pkgdesc="Roxy Migurdia themed Niri configuration"
 arch=('any')
 url="https://github.com/keircn/RoxyOS"
@@ -11,5 +11,5 @@ depends=('niri')
 options=('!strip')
 
 package() {
-    cp -r "${startdir}/usr" "${pkgdir}/"
+  cp -r "${startdir}/usr" "${pkgdir}/"
 }
