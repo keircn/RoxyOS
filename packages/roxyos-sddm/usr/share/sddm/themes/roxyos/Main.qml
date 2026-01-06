@@ -6,7 +6,7 @@ SDDM.Theme {
     id: theme
 
     property int padding: 20
-    property color bgColor: "#0a1628"
+    property color bgColor: "#0a0a0f"
     property color accentColor: "#5dade2"
     property color textColor: "#e8f4fc"
 

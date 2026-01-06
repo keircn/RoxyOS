@@ -1,6 +1,6 @@
 set -g roxyos_color_primary "#1a5276"
 set -g roxyos_color_accent "#5dade2"
-set -g roxyos_color_background "#0a1628"
+set -g roxyos_color_background "#0a0a0f"
 set -g roxyos_color_text "#e8f4fc"
 
 set -g fish_color_normal $roxyos_color_text

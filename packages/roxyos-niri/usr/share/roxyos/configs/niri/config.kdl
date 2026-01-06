@@ -43,7 +43,7 @@ layout {
         softness 20
         spread 3
         offset x=0 y=3
-        color "#0a162880"
+        color "#0a0a0f80"
     }
 
     struts {

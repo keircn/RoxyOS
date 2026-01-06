@@ -43,6 +43,6 @@ set -gx GOPATH "$HOME/go"
 set -gx ROXYOS_THEME "migurdia"
 set -gx ROXYOS_COLOR_PRIMARY "#1a5276"
 set -gx ROXYOS_COLOR_ACCENT "#5dade2"
-set -gx ROXYOS_COLOR_BACKGROUND "#0a1628"
+set -gx ROXYOS_COLOR_BACKGROUND "#0a0a0f"
 
 set -gx TERM "xterm-256color"

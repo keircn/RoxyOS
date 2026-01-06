@@ -1,14 +1,14 @@
 [colors]
-background = 0a1628
+background = 0a0a0f
 foreground = e8f4fc
 
 selection-background = 5dade2
-selection-foreground = 0a1628
+selection-foreground = 0a0a0f
 
 cursor-color = 5dade2
-cursor-text = 0a1628
+cursor-text = 0a0a0f
 
-palette = 0=1c2833
+palette = 0=141419
 palette = 1=8b4a2b
 palette = 2=4a6b5a
 palette = 3=c9a227
